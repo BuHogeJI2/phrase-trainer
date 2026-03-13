@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
+  <title id="title">Фразы для жизни в Германии</title>
+  <desc id="desc">Спокойная брендовая обложка приложения для практичного немецкого.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f8f4ef" />
+      <stop offset="100%" stop-color="#efe5d9" />
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)" />
+  <circle cx="1040" cy="120" r="120" fill="#d7efe7" />
+  <circle cx="110" cy="540" r="90" fill="#e5d8c7" />
+  <rect x="96" y="92" width="180" height="180" rx="44" fill="#008f6b" />
+  <path
+    d="M156 138c0-14.359 11.641-26 26-26h70c14.359 0 26 11.641 26 26v58c0 14.359-11.641 26-26 26h-35.5L176 256.5V222h-0c-14.359 0-26-11.641-26-26v-58Z"
+    fill="#f8f4ef"
+  />
+  <rect x="188" y="142" width="58" height="10" rx="5" fill="#008f6b" />
+  <rect x="188" y="164" width="72" height="10" rx="5" fill="#008f6b" />
+  <rect x="188" y="186" width="50" height="10" rx="5" fill="#008f6b" />
+  <text
+    x="96"
+    y="382"
+    fill="#171717"
+    font-family="Inter, Arial, sans-serif"
+    font-size="72"
+    font-weight="700"
+  >
+    Фразы для жизни в Германии
+  </text>
+  <text
+    x="96"
+    y="452"
+    fill="#414141"
+    font-family="Inter, Arial, sans-serif"
+    font-size="34"
+    font-weight="400"
+  >
+    Практичный немецкий для реальных бытовых ситуаций
+  </text>
+  <text
+    x="96"
+    y="514"
+    fill="#5f5f5f"
+    font-family="Inter, Arial, sans-serif"
+    font-size="28"
+    font-weight="400"
+  >
+    Русскоязычный интерфейс, короткая практика и спокойный темп для начинающих.
+  </text>
+</svg>

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title desc">
+  <title id="title">Фразы для жизни в Германии</title>
+  <desc id="desc">Минималистичная иконка с речевым пузырем и строками текста.</desc>
+  <rect width="64" height="64" rx="18" fill="#f8f4ef" />
+  <path
+    d="M15 18c0-3.314 2.686-6 6-6h22c3.314 0 6 2.686 6 6v16c0 3.314-2.686 6-6 6H31.5L21 49.5V40h0c-3.314 0-6-2.686-6-6V18Z"
+    fill="#008f6b"
+  />
+  <rect x="23" y="21" width="18" height="3.5" rx="1.75" fill="#f8f4ef" />
+  <rect x="23" y="28" width="14" height="3.5" rx="1.75" fill="#f8f4ef" />
+  <circle cx="41" cy="29.75" r="1.75" fill="#f8f4ef" />
+</svg>

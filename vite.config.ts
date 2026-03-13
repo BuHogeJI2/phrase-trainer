@@ -9,24 +9,24 @@ export default defineConfig({
     tailwindcss(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['vite.svg'],
+      includeAssets: ['favicon.svg', 'og-cover.svg'],
       manifest: {
         name: 'Фразы для жизни в Германии',
         short_name: 'RU-DE Фразы',
         description: 'Мобильное приложение для изучения бытовых немецких фраз A1/A2',
-        theme_color: '#0f172a',
-        background_color: '#eef3fb',
+        theme_color: '#008f6b',
+        background_color: '#f8f4ef',
         display: 'standalone',
         start_url: '/',
         lang: 'ru',
         icons: [
           {
-            src: '/vite.svg',
+            src: '/favicon.svg',
             sizes: '192x192',
             type: 'image/svg+xml',
           },
           {
-            src: '/vite.svg',
+            src: '/favicon.svg',
             sizes: '512x512',
             type: 'image/svg+xml',
           },
