@@ -1,5 +1,6 @@
 import { NavLink, Outlet } from 'react-router-dom'
 import { ui } from '../data/ui'
+import { LevelBadge } from './ui/LevelBadge'
 
 const navItems = [
   { to: '/', label: ui.nav.home },
@@ -13,8 +14,10 @@ function NavItem({ to, label }: { to: string; label: string }) {
     <NavLink
       to={to}
       className={({ isActive }) =>
-        `rounded-xl px-3 py-2 text-xs font-semibold transition ${
-          isActive ? 'bg-sky-700 text-white' : 'text-slate-600 hover:bg-slate-100'
+        `rounded-full px-3 py-2 text-xs font-semibold transition ${
+          isActive
+            ? 'bg-[var(--color-accent)] text-white shadow-[var(--shadow-soft)]'
+            : 'text-[var(--color-text-muted)] hover:bg-[var(--color-surface-muted)]'
         }`
       }
       end={to === '/'}
@@ -26,14 +29,14 @@ function NavItem({ to, label }: { to: string; label: string }) {
 
 export function Layout() {
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top,#d7e8ff,transparent_55%),linear-gradient(180deg,#f8fbff,#eef2ff)] text-slate-900">
-      <header className="sticky top-0 z-20 border-b border-slate-200/80 bg-white/85 backdrop-blur">
+    <div className="min-h-screen bg-[radial-gradient(circle_at_top,#efe3cf,transparent_45%),linear-gradient(180deg,#f8f4ef,#f6f1ea)] text-[var(--color-text)]">
+      <header className="sticky top-0 z-20 border-b border-[var(--color-border)] bg-[color:rgba(248,244,239,0.92)] backdrop-blur">
         <div className="mx-auto flex w-full max-w-3xl items-center justify-between px-4 py-3">
           <div>
-            <p className="text-sm font-semibold text-slate-900">{ui.appName}</p>
-            <p className="text-xs text-slate-500">{ui.appSubtitle}</p>
+            <p className="text-sm font-semibold text-[var(--color-text)]">{ui.appName}</p>
+            <p className="text-xs text-[var(--color-text-muted)]">{ui.appSubtitle}</p>
           </div>
-          <span className="rounded-full bg-sky-100 px-3 py-1 text-xs font-semibold text-sky-900">A1 / A2</span>
+          <LevelBadge level="all" compact />
         </div>
       </header>
 
@@ -41,7 +44,7 @@ export function Layout() {
         <Outlet />
       </main>
 
-      <nav className="fixed bottom-0 left-0 right-0 border-t border-slate-200 bg-white/95 p-3 backdrop-blur">
+      <nav className="fixed bottom-0 left-0 right-0 border-t border-[var(--color-border)] bg-[color:rgba(255,253,249,0.96)] p-3 backdrop-blur">
         <div className="mx-auto flex w-full max-w-3xl items-center justify-between gap-2">
           {navItems.map((item) => (
             <NavItem key={item.to} to={item.to} label={item.label} />

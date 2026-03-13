@@ -8,6 +8,24 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  color: #1d1b19;
+  background: #f8f4ef;
+  --color-accent: #008f6b;
+  --color-accent-strong: #007357;
+  --color-accent-soft: #ddf4ec;
+  --color-bg: #f8f4ef;
+  --color-surface: #fffdf9;
+  --color-surface-muted: #f0ebe4;
+  --color-surface-strong: #e4ddd3;
+  --color-text: #1d1b19;
+  --color-text-muted: #645f58;
+  --color-border: #ddd5ca;
+  --color-border-strong: #cbbfb1;
+  --color-danger: #8f3d35;
+  --color-danger-soft: #f4e4e0;
+  --focus-ring: #0b8f6b;
+  --shadow-soft: 0 14px 36px rgba(55, 41, 24, 0.08);
+  --shadow-strong: 0 22px 44px rgba(0, 102, 77, 0.24);
 }
 
 * {
@@ -17,7 +35,8 @@
 body {
   margin: 0;
   min-width: 320px;
-  background: #eef3fb;
+  background: var(--color-bg);
+  color: var(--color-text);
 }
 
 button,
@@ -30,7 +49,7 @@ button:focus-visible,
 input:focus-visible,
 select:focus-visible,
 a:focus-visible {
-  outline: 3px solid #0369a1;
+  outline: 3px solid var(--focus-ring);
   outline-offset: 2px;
 }
 

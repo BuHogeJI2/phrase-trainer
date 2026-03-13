@@ -13,6 +13,7 @@
 │   └── vite.svg
 ├── src/
 │   ├── components/
+│   │   └── ui/
 │   ├── data/
 │   ├── lib/
 │   ├── pages/
@@ -54,6 +55,10 @@ Route-level screens:
 ### `src/components`
 
 Reusable UI blocks such as the layout shell, onboarding modal, phrase card, filters, progress widgets, and navigation.
+
+### `src/components/ui`
+
+Small shared primitives for the current design system foundation, such as buttons, section headers, and level badges.
 
 ### `src/state`
 

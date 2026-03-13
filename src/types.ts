@@ -16,6 +16,7 @@ export interface Situation {
   id: string
   slug: string
   titleRu: string
+  descriptionRu: string
   icon: string
   order: number
 }

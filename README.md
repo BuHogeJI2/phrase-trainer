@@ -45,7 +45,10 @@ transport-01.mp3
 ## Документация
 
 - [AGENTS.md](AGENTS.md) - основная карта проекта и ссылки на технические документы
+- [docs/product-principles.md](docs/product-principles.md) - цели продукта, тон и UX-правила
+- [docs/roadmap.md](docs/roadmap.md) - текущая итерация и будущий roadmap
 - [docs/project-structure.md](docs/project-structure.md) - структура репозитория и маршруты
 - [docs/architecture.md](docs/architecture.md) - устройство приложения и потоки данных
 - [docs/data-model.md](docs/data-model.md) - каталог фраз, localStorage и аудио
 - [docs/testing.md](docs/testing.md) - тестовый стек и текущие пробелы
+- [docs/frontend-qc.md](docs/frontend-qc.md) - чеклист для frontend quality control

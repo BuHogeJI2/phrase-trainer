@@ -34,11 +34,13 @@ npm run build
 ### Shared state
 
 - `src/state/AppContext.test.tsx`: reducer-backed persistence across remounts
+- `src/App.test.tsx`: first-run onboarding flow and reopening onboarding from settings
 
 ### UI components
 
 - `src/components/Layout.test.tsx`: Russian navigation labels render in the app shell
 - `src/components/PhraseCard.test.tsx`: direction-dependent labels and answer reveal behavior
+- `src/pages/HomePage.test.tsx`: daily CTA, urgent situations, continue card, and practical situation descriptions
 
 ## Coverage Shape
 

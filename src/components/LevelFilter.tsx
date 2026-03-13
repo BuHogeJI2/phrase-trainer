@@ -9,14 +9,16 @@ const levels: Array<Level | 'all'> = ['all', 'A1', 'A2']
 
 export function LevelFilter({ value, onChange }: LevelFilterProps) {
   return (
-    <div className="inline-flex rounded-xl bg-slate-200/70 p-1">
+    <div className="inline-flex rounded-full border border-[var(--color-border)] bg-[var(--color-surface-muted)] p-1">
       {levels.map((level) => (
         <button
           key={level}
           type="button"
           onClick={() => onChange(level)}
-          className={`rounded-lg px-3 py-2 text-sm font-medium transition ${
-            value === level ? 'bg-white text-slate-900 shadow' : 'text-slate-600'
+          className={`rounded-full px-3 py-2 text-sm font-medium transition ${
+            value === level
+              ? 'bg-[var(--color-surface)] text-[var(--color-text)] shadow-[var(--shadow-soft)]'
+              : 'text-[var(--color-text-muted)]'
           }`}
         >
           {level === 'all' ? 'Все' : level}

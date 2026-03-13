@@ -9,8 +9,9 @@ import { SettingsPage } from './pages/SettingsPage'
 import { SituationPage } from './pages/SituationPage'
 import { AppProvider, useAppState } from './state/AppContext'
 
-function AppRoutes() {
-  const { state, dispatch } = useAppState()
+export function AppRoutes() {
+  const { state, dispatch, closeOnboarding, isOnboardingOpen } = useAppState()
+  const shouldShowOnboarding = !state.prefs.onboardingCompleted || isOnboardingOpen
 
   return (
     <>
@@ -26,10 +27,18 @@ function AppRoutes() {
         </Route>
       </Routes>
 
-      {!state.prefs.onboardingCompleted ? (
+      {shouldShowOnboarding ? (
         <OnboardingModal
+          mode={state.prefs.onboardingCompleted ? 'settings' : 'initial'}
+          initialValues={{
+            direction: state.prefs.direction,
+            defaultLevel: state.prefs.defaultLevel,
+            transliterationEnabled: state.prefs.transliterationEnabled,
+          }}
+          onClose={closeOnboarding}
           onComplete={(payload) => {
             dispatch({ type: 'completeOnboarding', payload })
+            closeOnboarding()
           }}
         />
       ) : null}

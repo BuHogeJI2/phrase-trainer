@@ -3,6 +3,8 @@ import { Link, useParams } from 'react-router-dom'
 import { DirectionSwitch } from '../components/DirectionSwitch'
 import { LevelFilter } from '../components/LevelFilter'
 import { PhraseCard } from '../components/PhraseCard'
+import { LevelBadge } from '../components/ui/LevelBadge'
+import { buttonClassName } from '../components/ui/Button'
 import { phrasesBySituation } from '../data/phrases'
 import { situationBySlug } from '../data/situations'
 import { filterPhrases } from '../lib/learning'
@@ -30,9 +32,9 @@ export function SituationPage() {
 
   if (!situation) {
     return (
-      <section className="rounded-2xl border border-rose-200 bg-rose-50 p-4">
-        <p className="text-sm font-semibold text-rose-800">Ситуация не найдена.</p>
-        <Link to="/" className="mt-3 inline-flex rounded-xl bg-rose-700 px-4 py-2 text-sm font-semibold text-white">
+      <section className="rounded-[28px] border border-[var(--color-border)] bg-[var(--color-surface)] p-5 shadow-[var(--shadow-soft)]">
+        <p className="text-sm font-semibold text-[var(--color-danger)]">Ситуация не найдена.</p>
+        <Link to="/" className={`${buttonClassName()} mt-4`}>
           На главную
         </Link>
       </section>
@@ -40,12 +42,18 @@ export function SituationPage() {
   }
 
   return (
-    <div className="space-y-4">
-      <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-        <p className="text-base font-semibold text-slate-900">
-          {situation.icon} {situation.titleRu}
-        </p>
-        <p className="mt-1 text-sm text-slate-600">Нажимайте "Показать перевод", чтобы отметить фразу как изученную.</p>
+    <div className="space-y-5">
+      <section className="rounded-[28px] border border-[var(--color-border)] bg-[var(--color-surface)] p-5 shadow-[var(--shadow-soft)]">
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <p className="text-base font-semibold text-[var(--color-text)]">
+              {situation.icon} {situation.titleRu}
+            </p>
+            <p className="mt-2 text-sm leading-6 text-[var(--color-text-muted)]">{situation.descriptionRu}</p>
+            <p className="mt-2 text-sm text-[var(--color-text-muted)]">Нажимайте «Показать перевод», чтобы отметить фразу как изученную.</p>
+          </div>
+          <LevelBadge level={state.prefs.defaultLevel} compact />
+        </div>
         <div className="mt-3 flex flex-wrap gap-2">
           <DirectionSwitch
             direction={state.prefs.direction}
@@ -74,7 +82,7 @@ export function SituationPage() {
         ))}
       </div>
 
-      <Link to={`/practice?source=situation&slug=${situation.slug}`} className="inline-flex rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white">
+      <Link to={`/practice?source=situation&slug=${situation.slug}`} className={buttonClassName()}>
         Практиковать только эту ситуацию
       </Link>
     </div>

@@ -27,7 +27,8 @@ When adding new behavior, prefer extending the existing folder instead of creati
 
 - The project uses Tailwind utility classes inline inside components.
 - `src/index.css` is the place for global styles only.
-- Preserve the existing visual language: rounded mobile-friendly cards, soft slate/sky palette, and bottom navigation shell.
+- Preserve the existing visual language: calm mobile-friendly cards, warm neutral surfaces, accent-driven primary actions, and the bottom navigation shell.
+- Prefer a small in-repo primitive layer before adding external UI dependencies. Radix/shadcn-style primitives are acceptable only when they solve a concrete accessibility or usability problem better than local code.
 
 ## Content and Copy
 

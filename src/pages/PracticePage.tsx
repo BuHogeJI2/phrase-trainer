@@ -1,8 +1,11 @@
 import { useMemo, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { DirectionSwitch } from '../components/DirectionSwitch'
+import { EmptyState } from '../components/EmptyState'
 import { LevelFilter } from '../components/LevelFilter'
 import { PhraseCard } from '../components/PhraseCard'
+import { buttonClassName } from '../components/ui/Button'
+import { SectionHeader } from '../components/ui/SectionHeader'
 import { phrases, phrasesBySituation } from '../data/phrases'
 import { situationBySlug } from '../data/situations'
 import { buildQuizQuestion, createSeededRandom, filterPhrases, getDailyPhrases } from '../lib/learning'
@@ -94,12 +97,14 @@ export function PracticePage() {
   }
 
   return (
-    <div className="space-y-4">
-      <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-        <h1 className="text-lg font-semibold text-slate-900">Практика</h1>
-        <p className="mt-1 text-sm text-slate-600">
-          Текущий набор: {source === 'daily' ? 'Сегодняшние 10 фраз' : source === 'favorites' ? 'Только избранное' : 'Общий'} ({pool.length} фраз)
-        </p>
+    <div className="space-y-5">
+      <section className="rounded-[28px] border border-[var(--color-border)] bg-[var(--color-surface)] p-5 shadow-[var(--shadow-soft)]">
+        <SectionHeader
+          title="Практика"
+          subtitle={`Текущий набор: ${
+            source === 'daily' ? 'Сегодняшние 10 фраз' : source === 'favorites' ? 'Только избранное' : 'Общий'
+          } (${pool.length} фраз)`}
+        />
 
         <div className="mt-3 flex flex-wrap gap-2">
           <DirectionSwitch
@@ -116,8 +121,10 @@ export function PracticePage() {
               setMode('cards')
               setAnswered(null)
             }}
-            className={`rounded-xl px-4 py-2 text-sm font-semibold ${
-              mode === 'cards' ? 'bg-sky-700 text-white' : 'bg-slate-100 text-slate-700'
+            className={`rounded-full px-4 py-2 text-sm font-semibold ${
+              mode === 'cards'
+                ? 'bg-[var(--color-accent)] text-white'
+                : 'bg-[var(--color-surface-muted)] text-[var(--color-text-muted)]'
             }`}
           >
             Флеш-карточки
@@ -128,8 +135,10 @@ export function PracticePage() {
               setMode('quiz')
               setAnswered(null)
             }}
-            className={`rounded-xl px-4 py-2 text-sm font-semibold ${
-              mode === 'quiz' ? 'bg-sky-700 text-white' : 'bg-slate-100 text-slate-700'
+            className={`rounded-full px-4 py-2 text-sm font-semibold ${
+              mode === 'quiz'
+                ? 'bg-[var(--color-accent)] text-white'
+                : 'bg-[var(--color-surface-muted)] text-[var(--color-text-muted)]'
             }`}
           >
             Тест
@@ -137,25 +146,26 @@ export function PracticePage() {
         </div>
 
         <div className="mt-3 flex flex-wrap gap-2 text-sm">
-          <Link to="/practice?source=favorites" onClick={jumpToSavedSession} className="rounded-xl border border-slate-300 px-3 py-2 font-semibold text-slate-700">
+          <Link to="/practice?source=favorites" onClick={jumpToSavedSession} className={buttonClassName('secondary')}>
             Режим по избранному
           </Link>
-          <Link to="/practice?source=daily" onClick={jumpToSavedSession} className="rounded-xl border border-slate-300 px-3 py-2 font-semibold text-slate-700">
+          <Link to="/practice?source=daily" onClick={jumpToSavedSession} className={buttonClassName('secondary')}>
             Сегодняшние 10
           </Link>
-          <Link to="/practice" onClick={jumpToSavedSession} className="rounded-xl border border-slate-300 px-3 py-2 font-semibold text-slate-700">
+          <Link to="/practice" onClick={jumpToSavedSession} className={buttonClassName('ghost')}>
             Сбросить фильтр
           </Link>
         </div>
       </section>
 
       {!activePhrase ? (
-        <section className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
-          В выбранном режиме пока нет фраз. Добавьте избранные фразы или ослабьте фильтр уровня.
-        </section>
+        <EmptyState
+          title="Пока нет фраз для этой практики"
+          description="Добавьте избранные фразы или ослабьте фильтр уровня, чтобы продолжить тренировку."
+        />
       ) : mode === 'cards' ? (
         <section className="space-y-3">
-          <p className="text-sm font-medium text-slate-600">
+          <p className="text-sm font-medium text-[var(--color-text-muted)]">
             Карточка {index + 1} из {pool.length}
           </p>
           <PhraseCard
@@ -169,33 +179,33 @@ export function PracticePage() {
             onMarkCompleted={(phraseId) => dispatch({ type: 'markCompleted', payload: { phraseId } })}
           />
           <div className="flex gap-2">
-            <button type="button" onClick={previousItem} className="rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700">
+            <button type="button" onClick={previousItem} className={buttonClassName('secondary')}>
               Назад
             </button>
-            <button type="button" onClick={nextItem} className="rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white">
+            <button type="button" onClick={nextItem} className={buttonClassName()}>
               Далее
             </button>
           </div>
         </section>
       ) : (
-        <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+        <section className="rounded-[28px] border border-[var(--color-border)] bg-[var(--color-surface)] p-5 shadow-[var(--shadow-soft)]">
           {quizQuestion ? (
             <>
-              <p className="text-sm font-medium text-slate-600">
+              <p className="text-sm font-medium text-[var(--color-text-muted)]">
                 Вопрос {index + 1} из {pool.length}
               </p>
-              <p className="mt-2 text-base font-semibold text-slate-900">{quizQuestion.prompt}</p>
+              <p className="mt-2 text-base font-semibold text-[var(--color-text)]">{quizQuestion.prompt}</p>
               <div className="mt-4 grid gap-2">
                 {quizQuestion.options.map((option) => {
                   const isSelected = answered?.selected === option
                   const isCorrect = quizQuestion.correctAnswer === option
                   const buttonClass = answered
                     ? isCorrect
-                      ? 'border-emerald-500 bg-emerald-50 text-emerald-900'
+                      ? 'border-[var(--color-accent)] bg-[var(--color-accent-soft)] text-[var(--color-accent-strong)]'
                       : isSelected
-                        ? 'border-rose-500 bg-rose-50 text-rose-800'
-                        : 'border-slate-200 bg-white text-slate-500'
-                    : 'border-slate-300 bg-white text-slate-900 hover:bg-slate-50'
+                        ? 'border-[var(--color-danger)] bg-[var(--color-danger-soft)] text-[var(--color-danger)]'
+                        : 'border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text-muted)]'
+                    : 'border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text)] hover:bg-[var(--color-surface-muted)]'
 
                   return (
                     <button
@@ -203,7 +213,7 @@ export function PracticePage() {
                       type="button"
                       onClick={() => answerQuiz(option)}
                       disabled={Boolean(answered)}
-                      className={`rounded-xl border p-3 text-left text-sm font-medium ${buttonClass}`}
+                      className={`rounded-[24px] border p-3 text-left text-sm font-medium ${buttonClass}`}
                     >
                       {option}
                     </button>
@@ -212,11 +222,15 @@ export function PracticePage() {
               </div>
 
               {answered ? (
-                <div className="mt-4 flex items-center justify-between gap-3 rounded-xl bg-slate-100 p-3">
-                  <p className={`text-sm font-semibold ${answered.correct ? 'text-emerald-700' : 'text-rose-700'}`}>
+                <div className="mt-4 flex items-center justify-between gap-3 rounded-[24px] bg-[var(--color-surface-muted)] p-3">
+                  <p
+                    className={`text-sm font-semibold ${
+                      answered.correct ? 'text-[var(--color-accent-strong)]' : 'text-[var(--color-danger)]'
+                    }`}
+                  >
                     {answered.correct ? 'Верно!' : 'Неправильно'}
                   </p>
-                  <button type="button" onClick={nextItem} className="rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white">
+                  <button type="button" onClick={nextItem} className={buttonClassName()}>
                     Следующий вопрос
                   </button>
                 </div>
@@ -226,7 +240,7 @@ export function PracticePage() {
         </section>
       )}
 
-      <section className="rounded-2xl border border-slate-200 bg-white p-4 text-sm text-slate-700">
+      <section className="rounded-[28px] border border-[var(--color-border)] bg-[var(--color-surface)] p-5 text-sm text-[var(--color-text-muted)] shadow-[var(--shadow-soft)]">
         <p>Всего ответов: {state.progress.quizStats.totalAnswered}</p>
         <p>Правильных: {state.progress.quizStats.correct}</p>
         <p>Текущая серия: {state.progress.quizStats.streak}</p>

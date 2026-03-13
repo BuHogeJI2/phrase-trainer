@@ -1,5 +1,5 @@
 /* eslint-disable react-refresh/only-export-components */
-import { createContext, useContext, useEffect, useMemo, useReducer } from 'react'
+import { createContext, useContext, useEffect, useMemo, useReducer, useState } from 'react'
 import { loadStateFromStorage, saveStateToStorage } from '../lib/storage'
 import type { AppState, Direction, Level } from '../types'
 
@@ -18,6 +18,9 @@ type Action =
 interface AppContextValue {
   state: AppState
   dispatch: React.Dispatch<Action>
+  isOnboardingOpen: boolean
+  openOnboarding: () => void
+  closeOnboarding: () => void
 }
 
 const AppContext = createContext<AppContextValue | null>(null)
@@ -151,12 +154,22 @@ interface ProviderProps {
 
 export function AppProvider({ children }: ProviderProps) {
   const [state, dispatch] = useReducer(reducer, undefined, () => loadStateFromStorage())
+  const [isOnboardingOpen, setIsOnboardingOpen] = useState(false)
 
   useEffect(() => {
     saveStateToStorage(state)
   }, [state])
 
-  const value = useMemo(() => ({ state, dispatch }), [state])
+  const value = useMemo(
+    () => ({
+      state,
+      dispatch,
+      isOnboardingOpen,
+      openOnboarding: () => setIsOnboardingOpen(true),
+      closeOnboarding: () => setIsOnboardingOpen(false),
+    }),
+    [isOnboardingOpen, state],
+  )
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>
 }

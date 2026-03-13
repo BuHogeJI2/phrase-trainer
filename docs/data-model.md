@@ -11,6 +11,7 @@ Each situation in `src/data/situations.ts` includes:
 - `id`
 - `slug`
 - `titleRu`
+- `descriptionRu`
 - `icon`
 - `order`
 

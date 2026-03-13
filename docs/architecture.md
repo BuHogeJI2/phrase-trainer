@@ -9,6 +9,7 @@ The app is a client-only React SPA served by Vite and enhanced with `vite-plugin
 1. `src/main.tsx` imports global styles, registers the service worker with `registerSW({ immediate: true })`, and mounts the app.
 2. `src/App.tsx` wraps the tree in `AppProvider` and `BrowserRouter`.
 3. `AppRoutes` renders the route tree inside `Layout` and conditionally overlays `OnboardingModal` until `prefs.onboardingCompleted` becomes `true`.
+4. After first-run completion, the same onboarding flow can be reopened from Settings through non-persistent UI state held in `AppContext`.
 
 ## UI Shell
 
@@ -22,6 +23,7 @@ The app is a client-only React SPA served by Vite and enhanced with `vite-plugin
 
 - `prefs`: direction, default level, transliteration toggle, autoplay toggle, onboarding completion.
 - `progress`: completed phrases, saved phrases, quiz stats, and last visited situation metadata.
+- non-persistent UI state: onboarding visibility for reopening the guided flow from Settings.
 
 The reducer is the boundary for persistent state updates. Every reducer change is serialized back to `localStorage` via `saveStateToStorage` in an effect.
 
