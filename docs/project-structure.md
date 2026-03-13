@@ -6,7 +6,6 @@
 .
 ├── AGENTS.md
 ├── README.md
-├── TODO.md
 ├── docs/
 ├── public/
 │   ├── audio/
@@ -36,6 +35,7 @@
 - `package.json`: scripts, dependencies, and package manager metadata.
 - `vite.config.ts`: React, Tailwind, Vitest, and PWA plugin configuration.
 - `eslint.config.js`: flat ESLint config for TypeScript and React hooks.
+- `lefthook.yml`: repo-level pre-commit quality gates.
 - `public/audio/README.txt`: naming contract for optional MP3 files.
 - `dist/`: generated build output from `npm run build`.
 
