@@ -5,6 +5,7 @@ import { PhraseCard } from '../components/PhraseCard'
 import { buttonClassName } from '../components/ui/Button'
 import { SectionHeader } from '../components/ui/SectionHeader'
 import { phraseById } from '../data/phrases'
+import { getPhraseProgress } from '../lib/learning'
 import { useAppState } from '../state/AppContext'
 
 export function SavedPage() {
@@ -36,19 +37,27 @@ export function SavedPage() {
         <EmptyState title="Пока нет избранных фраз" description="Добавьте полезные фразы на экране ситуации, чтобы быстро вернуться к ним позже." />
       ) : (
         <div className="grid gap-3">
-          {saved.map((phrase) => (
-            <PhraseCard
-              key={phrase.id}
-              phrase={phrase}
-              direction={state.prefs.direction}
-              transliterationEnabled={state.prefs.transliterationEnabled}
-              audioAutoplay={state.prefs.audioAutoplay}
-              isSaved={state.progress.savedPhraseIds.includes(phrase.id)}
-              isCompleted={state.progress.completedPhraseIds.includes(phrase.id)}
-              onToggleSaved={(phraseId) => dispatch({ type: 'toggleSaved', payload: { phraseId } })}
-              onMarkCompleted={(phraseId) => dispatch({ type: 'markCompleted', payload: { phraseId } })}
-            />
-          ))}
+          {saved.map((phrase) => {
+            const progress = getPhraseProgress(state.progress, phrase.id)
+
+            return (
+              <PhraseCard
+                key={phrase.id}
+                phrase={phrase}
+                direction={state.prefs.direction}
+                transliterationEnabled={state.prefs.transliterationEnabled}
+                audioAutoplay={state.prefs.audioAutoplay}
+                isSaved={state.progress.savedPhraseIds.includes(phrase.id)}
+                status={progress.status}
+                isDifficult={progress.manualDifficult || progress.status === 'difficult'}
+                isKnown={progress.manualKnown || progress.status === 'known'}
+                onToggleSaved={(phraseId) => dispatch({ type: 'toggleSaved', payload: { phraseId } })}
+                onRecordView={(phraseId) => dispatch({ type: 'recordPhraseView', payload: { phraseId } })}
+                onToggleDifficult={(phraseId) => dispatch({ type: 'togglePhraseDifficult', payload: { phraseId } })}
+                onToggleKnown={(phraseId) => dispatch({ type: 'togglePhraseKnown', payload: { phraseId } })}
+              />
+            )
+          })}
         </div>
       )}
     </div>

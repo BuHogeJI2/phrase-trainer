@@ -6,11 +6,12 @@ interface SituationCardProps {
   situation: Situation
   to: string
   progressLabel: string
+  detailLabel?: string
   level: 'A1' | 'A2' | 'all'
   variant?: 'default' | 'urgent'
 }
 
-export function SituationCard({ situation, to, progressLabel, level, variant = 'default' }: SituationCardProps) {
+export function SituationCard({ situation, to, progressLabel, detailLabel, level, variant = 'default' }: SituationCardProps) {
   const urgent = variant === 'urgent'
 
   return (
@@ -36,7 +37,10 @@ export function SituationCard({ situation, to, progressLabel, level, variant = '
       </div>
 
       <div className="mt-4 flex items-center justify-between gap-3 border-t border-[var(--color-border)] pt-3 text-sm">
-        <p className="text-[var(--color-text-muted)]">{urgent ? 'Быстрый вход' : 'Прогресс'}</p>
+        <div>
+          <p className="text-[var(--color-text-muted)]">{urgent ? 'Быстрый вход' : 'Уверенно в памяти'}</p>
+          {detailLabel ? <p className="mt-1 text-xs text-[var(--color-text-muted)]">{detailLabel}</p> : null}
+        </div>
         <p className="font-semibold text-[var(--color-text)]">{progressLabel}</p>
       </div>
     </Link>

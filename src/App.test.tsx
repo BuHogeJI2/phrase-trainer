@@ -36,7 +36,7 @@ describe('onboarding flow', () => {
     await user.click(screen.getByRole('button', { name: 'Начать обучение' }))
 
     await waitFor(() => {
-      const raw = localStorage.getItem('ru-de-phrase-trainer-state-v1')
+      const raw = localStorage.getItem('ru-de-phrase-trainer-state-v2')
       expect(raw).not.toBeNull()
       expect(screen.queryByText('Немецкие фразы для реальных ситуаций в Германии')).not.toBeInTheDocument()
 
@@ -84,7 +84,7 @@ describe('onboarding flow', () => {
     await user.click(dialogQueries.getByRole('button', { name: 'Сохранить настройки' }))
 
     await waitFor(() => {
-      const parsed = JSON.parse(localStorage.getItem('ru-de-phrase-trainer-state-v1') ?? '{}')
+      const parsed = JSON.parse(localStorage.getItem('ru-de-phrase-trainer-state-v2') ?? '{}')
       expect(parsed.prefs.direction).toBe('de_to_ru')
       expect(parsed.prefs.defaultLevel).toBe('A1')
       expect(parsed.prefs.transliterationEnabled).toBe(false)

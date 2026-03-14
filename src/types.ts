@@ -1,5 +1,8 @@
 export type Direction = 'ru_to_de' | 'de_to_ru'
 export type Level = 'A1' | 'A2'
+export type PhraseLearningState = 'new' | 'studying' | 'difficult' | 'known'
+export type PhrasePracticeResult = 'correct' | 'incorrect'
+export type PracticeSessionPhase = 'learn' | 'checkpoint' | 'mistakes' | 'retry' | 'done'
 
 export interface Phrase {
   id: string
@@ -35,9 +38,21 @@ export interface QuizStats {
   streak: number
 }
 
+export interface PhraseProgress {
+  status: PhraseLearningState
+  viewCount: number
+  lastViewedAt: string | null
+  correctCount: number
+  incorrectCount: number
+  lastResult: PhrasePracticeResult | null
+  manualDifficult: boolean
+  manualKnown: boolean
+  lastPracticedAt: string | null
+}
+
 export interface ProgressState {
-  completedPhraseIds: string[]
   savedPhraseIds: string[]
+  phraseProgress: Record<string, PhraseProgress>
   quizStats: QuizStats
   lastVisitedSituationId: string | null
   lastVisitedAt: string | null

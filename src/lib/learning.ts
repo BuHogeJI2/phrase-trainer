@@ -1,4 +1,12 @@
-import type { Badge, Direction, Level, Phrase, ProgressState } from '../types'
+import type {
+  Badge,
+  Direction,
+  Level,
+  Phrase,
+  PhraseLearningState,
+  PhraseProgress,
+  ProgressState,
+} from '../types'
 
 function hashSeed(input: string): number {
   return input.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0)
@@ -31,16 +39,122 @@ export function filterPhrases(phrases: Phrase[], level: Level | 'all', situation
   })
 }
 
-export function getDailyPhrases(phrases: Phrase[], dateISO: string, amount = 10): Phrase[] {
-  const random = mulberry32(hashSeed(dateISO))
-  const pool = [...phrases]
+export function createDefaultPhraseProgress(
+  overrides: Partial<PhraseProgress> = {},
+): PhraseProgress {
+  return {
+    status: 'new',
+    viewCount: 0,
+    lastViewedAt: null,
+    correctCount: 0,
+    incorrectCount: 0,
+    lastResult: null,
+    manualDifficult: false,
+    manualKnown: false,
+    lastPracticedAt: null,
+    ...overrides,
+  }
+}
 
-  for (let i = pool.length - 1; i > 0; i -= 1) {
-    const j = Math.floor(random() * (i + 1))
-    ;[pool[i], pool[j]] = [pool[j], pool[i]]
+export function derivePhraseStatus(progress: PhraseProgress): PhraseLearningState {
+  if (progress.manualKnown) {
+    return 'known'
   }
 
-  return pool.slice(0, amount)
+  if (progress.manualDifficult || progress.lastResult === 'incorrect' || progress.incorrectCount > progress.correctCount) {
+    return 'difficult'
+  }
+
+  if (progress.correctCount >= 3 && progress.incorrectCount === 0) {
+    return 'known'
+  }
+
+  if (progress.viewCount > 0 || progress.correctCount > 0 || progress.incorrectCount > 0) {
+    return 'studying'
+  }
+
+  return 'new'
+}
+
+export function normalizePhraseProgress(progress?: Partial<PhraseProgress> | null): PhraseProgress {
+  const normalized = createDefaultPhraseProgress(progress ?? {})
+  return {
+    ...normalized,
+    status: derivePhraseStatus(normalized),
+  }
+}
+
+export function getPhraseProgress(state: ProgressState, phraseId: string): PhraseProgress {
+  return normalizePhraseProgress(state.phraseProgress[phraseId])
+}
+
+export function getPhraseStatus(state: ProgressState, phraseId: string): PhraseLearningState {
+  return getPhraseProgress(state, phraseId).status
+}
+
+export function getKnownPhraseCount(state: ProgressState, phraseIds: string[]): number {
+  return phraseIds.filter((phraseId) => getPhraseStatus(state, phraseId) === 'known').length
+}
+
+export function getDifficultPhraseCount(state: ProgressState, phraseIds: string[]): number {
+  return phraseIds.filter((phraseId) => getPhraseStatus(state, phraseId) === 'difficult').length
+}
+
+export function getStudyingPhraseCount(state: ProgressState, phraseIds: string[]): number {
+  return phraseIds.filter((phraseId) => getPhraseStatus(state, phraseId) === 'studying').length
+}
+
+function getPracticePriority(progress: PhraseProgress): number {
+  if (progress.manualDifficult || progress.lastResult === 'incorrect') {
+    return 0
+  }
+
+  switch (progress.status) {
+    case 'difficult':
+      return 1
+    case 'studying':
+      return 2
+    case 'new':
+      return 3
+    case 'known':
+    default:
+      return 4
+  }
+}
+
+function getPracticeFreshness(progress: PhraseProgress): number {
+  const lastPracticed = progress.lastPracticedAt ? Date.parse(progress.lastPracticedAt) : 0
+  return Number.isNaN(lastPracticed) ? 0 : lastPracticed
+}
+
+export function prioritizePhrasesForPractice(phrases: Phrase[], progressState: ProgressState, seed = 'practice'): Phrase[] {
+  const random = mulberry32(hashSeed(seed))
+
+  return [...phrases].sort((left, right) => {
+    const leftProgress = getPhraseProgress(progressState, left.id)
+    const rightProgress = getPhraseProgress(progressState, right.id)
+    const bucketDiff = getPracticePriority(leftProgress) - getPracticePriority(rightProgress)
+
+    if (bucketDiff !== 0) {
+      return bucketDiff
+    }
+
+    const freshnessDiff = getPracticeFreshness(leftProgress) - getPracticeFreshness(rightProgress)
+    if (freshnessDiff !== 0) {
+      return freshnessDiff
+    }
+
+    return random() - 0.5
+  })
+}
+
+export function getDailyPracticePool(
+  phrases: Phrase[],
+  progressState: ProgressState,
+  dateISO: string,
+  amount = 10,
+): Phrase[] {
+  return prioritizePhrasesForPractice(phrases, progressState, `daily-${dateISO}`).slice(0, amount)
 }
 
 export interface QuizQuestion {
@@ -76,8 +190,43 @@ export function buildQuizQuestion(
   }
 }
 
+export interface MatchingItem {
+  phraseId: string
+  text: string
+}
+
+export interface MatchingRound {
+  prompts: MatchingItem[]
+  answers: MatchingItem[]
+}
+
+export function buildMatchingRound(
+  phrasesPool: Phrase[],
+  direction: Direction,
+  random: () => number,
+): MatchingRound {
+  const prompts = phrasesPool.map((phrase) => {
+    const { prompt, answer } = getPromptAndAnswer(phrase, direction)
+
+    return {
+      phraseId: phrase.id,
+      prompt,
+      answer,
+    }
+  })
+
+  const answers = [...prompts]
+    .sort(() => random() - 0.5)
+    .map(({ phraseId, answer }) => ({ phraseId, text: answer }))
+
+  return {
+    prompts: prompts.map(({ phraseId, prompt }) => ({ phraseId, text: prompt })),
+    answers,
+  }
+}
+
 export function computeBadges(progress: ProgressState): Badge[] {
-  const learned = progress.completedPhraseIds.length
+  const learned = Object.values(progress.phraseProgress).filter((item) => normalizePhraseProgress(item).status === 'known').length
   const quizCount = progress.quizStats.totalAnswered
   const streak = progress.quizStats.streak
 

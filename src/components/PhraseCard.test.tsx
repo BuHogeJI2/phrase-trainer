@@ -15,8 +15,9 @@ const phrase: Phrase = {
 }
 
 describe('PhraseCard', () => {
-  it('shows russian UI labels and switches answer content by direction', async () => {
+  it('shows russian UI labels, records reveal, and switches answer content by direction', async () => {
     const user = userEvent.setup()
+    const onRecordView = vi.fn()
 
     const { rerender } = render(
       <PhraseCard
@@ -24,9 +25,13 @@ describe('PhraseCard', () => {
         direction="ru_to_de"
         transliterationEnabled
         isSaved={false}
-        isCompleted={false}
+        status="new"
+        isDifficult={false}
+        isKnown={false}
         onToggleSaved={vi.fn()}
-        onMarkCompleted={vi.fn()}
+        onRecordView={onRecordView}
+        onToggleDifficult={vi.fn()}
+        onToggleKnown={vi.fn()}
       />,
     )
 
@@ -36,6 +41,9 @@ describe('PhraseCard', () => {
     await user.click(screen.getByRole('button', { name: 'Показать перевод' }))
     expect(screen.getByText('Немецкий')).toBeInTheDocument()
     expect(screen.getByText('Guten Tag')).toBeInTheDocument()
+    expect(onRecordView).toHaveBeenCalledWith('shop-01')
+    expect(screen.getByRole('button', { name: 'Отметить как трудную' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Отметить как знаю' })).toBeInTheDocument()
 
     rerender(
       <PhraseCard
@@ -43,9 +51,13 @@ describe('PhraseCard', () => {
         direction="de_to_ru"
         transliterationEnabled
         isSaved={false}
-        isCompleted={false}
+        status="studying"
+        isDifficult={false}
+        isKnown={false}
         onToggleSaved={vi.fn()}
-        onMarkCompleted={vi.fn()}
+        onRecordView={vi.fn()}
+        onToggleDifficult={vi.fn()}
+        onToggleKnown={vi.fn()}
       />,
     )
 

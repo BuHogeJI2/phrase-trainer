@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import type { Direction, Phrase } from '../types'
+import type { Direction, Phrase, PhraseLearningState } from '../types'
 import { getPromptAndAnswer } from '../lib/learning'
 import { buttonClassName } from './ui/Button'
 
@@ -8,10 +8,14 @@ interface PhraseCardProps {
   direction: Direction
   transliterationEnabled: boolean
   isSaved: boolean
-  isCompleted: boolean
+  status: PhraseLearningState
+  isDifficult: boolean
+  isKnown: boolean
   audioAutoplay?: boolean
   onToggleSaved: (phraseId: string) => void
-  onMarkCompleted: (phraseId: string) => void
+  onRecordView: (phraseId: string) => void
+  onToggleDifficult: (phraseId: string) => void
+  onToggleKnown: (phraseId: string) => void
 }
 
 async function playGermanAudio(phrase: Phrase): Promise<void> {
@@ -36,10 +40,14 @@ export function PhraseCard({
   direction,
   transliterationEnabled,
   isSaved,
-  isCompleted,
+  status,
+  isDifficult,
+  isKnown,
   audioAutoplay = false,
   onToggleSaved,
-  onMarkCompleted,
+  onRecordView,
+  onToggleDifficult,
+  onToggleKnown,
 }: PhraseCardProps) {
   const [showAnswer, setShowAnswer] = useState(false)
   const { prompt, answer } = getPromptAndAnswer(phrase, direction)
@@ -49,19 +57,33 @@ export function PhraseCard({
 
   async function revealAnswer() {
     setShowAnswer(true)
-    onMarkCompleted(phrase.id)
+    onRecordView(phrase.id)
 
     if (audioAutoplay && direction === 'ru_to_de') {
       await playGermanAudio(phrase)
     }
   }
 
+  const statusLabel =
+    status === 'known'
+      ? 'Знаю'
+      : status === 'difficult'
+        ? 'Трудная'
+        : status === 'studying'
+          ? 'В работе'
+          : 'Новая'
+
   return (
     <article className="rounded-[28px] border border-[var(--color-border)] bg-[var(--color-surface)] p-5 shadow-[var(--shadow-soft)]">
       <div className="mb-3 flex items-start justify-between gap-2">
-        <span className="rounded-full border border-[var(--color-border)] bg-[var(--color-surface-muted)] px-3 py-1 text-xs font-medium text-[var(--color-text-muted)]">
-          {phrase.level}
-        </span>
+        <div className="flex flex-wrap gap-2">
+          <span className="rounded-full border border-[var(--color-border)] bg-[var(--color-surface-muted)] px-3 py-1 text-xs font-medium text-[var(--color-text-muted)]">
+            {phrase.level}
+          </span>
+          <span className="rounded-full border border-[var(--color-border)] bg-[var(--color-surface-muted)] px-3 py-1 text-xs font-medium text-[var(--color-text-muted)]">
+            {statusLabel}
+          </span>
+        </div>
         <button
           type="button"
           className={`rounded-full px-3 py-1 text-xs font-semibold ${
@@ -106,7 +128,32 @@ export function PhraseCard({
         </button>
       </div>
 
-      {isCompleted ? <p className="mt-3 text-xs font-semibold text-[var(--color-accent-strong)]">Отмечено как изученное</p> : null}
+      <div className="mt-4 flex flex-wrap gap-2">
+        <button
+          type="button"
+          className={`rounded-full px-3 py-2 text-xs font-semibold ${
+            isDifficult
+              ? 'bg-[var(--color-danger-soft)] text-[var(--color-danger)]'
+              : 'bg-[var(--color-surface-muted)] text-[var(--color-text-muted)]'
+          }`}
+          onClick={() => onToggleDifficult(phrase.id)}
+          aria-pressed={isDifficult}
+        >
+          {isDifficult ? 'Трудная фраза' : 'Отметить как трудную'}
+        </button>
+        <button
+          type="button"
+          className={`rounded-full px-3 py-2 text-xs font-semibold ${
+            isKnown
+              ? 'bg-[var(--color-accent-soft)] text-[var(--color-accent-strong)]'
+              : 'bg-[var(--color-surface-muted)] text-[var(--color-text-muted)]'
+          }`}
+          onClick={() => onToggleKnown(phrase.id)}
+          aria-pressed={isKnown}
+        >
+          {isKnown ? 'Уже знаю' : 'Отметить как знаю'}
+        </button>
+      </div>
     </article>
   )
 }

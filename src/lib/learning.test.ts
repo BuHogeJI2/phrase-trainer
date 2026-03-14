@@ -1,6 +1,15 @@
 import { describe, expect, it } from 'vitest'
-import { buildQuizQuestion, createSeededRandom, filterPhrases, getPromptAndAnswer } from './learning'
+import {
+  buildQuizQuestion,
+  createDefaultPhraseProgress,
+  createSeededRandom,
+  filterPhrases,
+  getDailyPracticePool,
+  getPromptAndAnswer,
+  prioritizePhrasesForPractice,
+} from './learning'
 import type { Phrase } from '../types'
+import { defaultState } from './storage'
 
 const samplePhrases: Phrase[] = [
   {
@@ -71,5 +80,39 @@ describe('buildQuizQuestion', () => {
     expect(question.correctAnswer).toBe('Guten Tag')
     expect(question.options).toContain('Guten Tag')
     expect(question.options).toHaveLength(4)
+  })
+})
+
+describe('practice prioritization', () => {
+  it('puts difficult and unstable phrases before new and known ones', () => {
+    const progress = {
+      ...defaultState.progress,
+      phraseProgress: {
+        one: createDefaultPhraseProgress({ viewCount: 1, status: 'studying' }),
+        two: createDefaultPhraseProgress({ lastResult: 'incorrect', incorrectCount: 1, status: 'difficult' }),
+        three: createDefaultPhraseProgress(),
+        four: createDefaultPhraseProgress({ correctCount: 3, status: 'known', manualKnown: true }),
+      },
+    }
+
+    const ordered = prioritizePhrasesForPractice(samplePhrases, progress, 'priority-seed')
+
+    expect(ordered[0].id).toBe('two')
+    expect(ordered.at(-1)?.id).toBe('four')
+  })
+
+  it('builds daily pool with review phrases before new ones', () => {
+    const progress = {
+      ...defaultState.progress,
+      phraseProgress: {
+        one: createDefaultPhraseProgress({ lastResult: 'incorrect', incorrectCount: 1, status: 'difficult' }),
+        two: createDefaultPhraseProgress({ viewCount: 1, status: 'studying' }),
+        four: createDefaultPhraseProgress({ correctCount: 3, manualKnown: true, status: 'known' }),
+      },
+    }
+
+    const daily = getDailyPracticePool(samplePhrases, progress, '2026-03-14', 3)
+
+    expect(daily.map((phrase) => phrase.id)).toEqual(['one', 'two', 'three'])
   })
 })

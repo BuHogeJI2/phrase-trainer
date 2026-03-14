@@ -9,7 +9,15 @@ import { SectionHeader } from '../components/ui/SectionHeader'
 import { buttonClassName } from '../components/ui/Button'
 import { phrases, phrasesBySituation } from '../data/phrases'
 import { situationById, situations } from '../data/situations'
-import { computeBadges, filterPhrases, getDailyPhrases } from '../lib/learning'
+import {
+  computeBadges,
+  filterPhrases,
+  getDailyPracticePool,
+  getDifficultPhraseCount,
+  getKnownPhraseCount,
+  getPhraseStatus,
+  getStudyingPhraseCount,
+} from '../lib/learning'
 import { useAppState } from '../state/AppContext'
 
 const urgentSituationIds = ['doctor', 'pharmacy', 'transport', 'housing', 'documents']
@@ -22,9 +30,13 @@ export function HomePage() {
   const { state } = useAppState()
   const level = state.prefs.defaultLevel
   const visiblePhrases = filterPhrases(phrases, level)
-  const dailyPhrases = getDailyPhrases(visiblePhrases, getTodayISO(), 10)
-  const completedDaily = dailyPhrases.filter((item) => state.progress.completedPhraseIds.includes(item.id))
-  const completedInVisible = visiblePhrases.filter((item) => state.progress.completedPhraseIds.includes(item.id)).length
+  const visiblePhraseIds = visiblePhrases.map((phrase) => phrase.id)
+  const dailyPhrases = getDailyPracticePool(visiblePhrases, state.progress, getTodayISO(), 10)
+  const dailyNewCount = dailyPhrases.filter((item) => getPhraseStatus(state.progress, item.id) === 'new').length
+  const dailyReviewCount = dailyPhrases.length - dailyNewCount
+  const knownInVisible = getKnownPhraseCount(state.progress, visiblePhraseIds)
+  const studyingInVisible = getStudyingPhraseCount(state.progress, visiblePhraseIds)
+  const difficultInVisible = getDifficultPhraseCount(state.progress, visiblePhraseIds)
   const quizTotal = state.progress.quizStats.totalAnswered
   const quizAccuracy = quizTotal === 0 ? 0 : Math.round((state.progress.quizStats.correct / quizTotal) * 100)
   const lastSituation = state.progress.lastVisitedSituationId
@@ -35,8 +47,17 @@ export function HomePage() {
   const continueProgressLabel = lastSituation
     ? (() => {
         const visibleInSituation = filterPhrases(phrasesBySituation[lastSituation.id] ?? [], level)
-        const done = visibleInSituation.filter((item) => state.progress.completedPhraseIds.includes(item.id)).length
-        return `${done}/${visibleInSituation.length}`
+        return `${getKnownPhraseCount(state.progress, visibleInSituation.map((item) => item.id))}/${visibleInSituation.length}`
+      })()
+    : ''
+  const continueDetailLabel = lastSituation
+    ? (() => {
+        const visibleInSituation = filterPhrases(phrasesBySituation[lastSituation.id] ?? [], level)
+        const phraseIds = visibleInSituation.map((item) => item.id)
+        const studying = getStudyingPhraseCount(state.progress, phraseIds)
+        const difficult = getDifficultPhraseCount(state.progress, phraseIds)
+
+        return `В работе: ${studying}, трудных: ${difficult}`
       })()
     : ''
 
@@ -65,12 +86,17 @@ export function HomePage() {
       </section>
 
       <DailyPracticeCard
-        newCount={dailyPhrases.length - completedDaily.length}
-        reviewCount={completedDaily.length}
+        newCount={dailyNewCount}
+        reviewCount={dailyReviewCount}
         totalCount={dailyPhrases.length}
       />
 
-      <ContinueCard situation={lastSituation} lastVisitedAt={state.progress.lastVisitedAt} progressLabel={continueProgressLabel} />
+      <ContinueCard
+        situation={lastSituation}
+        lastVisitedAt={state.progress.lastVisitedAt}
+        progressLabel={continueProgressLabel}
+        detailLabel={continueDetailLabel}
+      />
 
       <section>
         <SectionHeader
@@ -80,14 +106,17 @@ export function HomePage() {
         <div className="mt-4 grid gap-3 sm:grid-cols-2">
           {urgentSituations.map((situation) => {
             const visibleInSituation = filterPhrases(phrasesBySituation[situation.id] ?? [], level)
-            const done = visibleInSituation.filter((item) => state.progress.completedPhraseIds.includes(item.id)).length
+            const phraseIds = visibleInSituation.map((item) => item.id)
+            const known = getKnownPhraseCount(state.progress, phraseIds)
+            const difficult = getDifficultPhraseCount(state.progress, phraseIds)
 
             return (
               <SituationCard
                 key={situation.id}
                 situation={situation}
                 to={`/situation/${situation.slug}`}
-                progressLabel={`${done}/${visibleInSituation.length}`}
+                progressLabel={`${known}/${visibleInSituation.length}`}
+                detailLabel={`Трудных: ${difficult}`}
                 level={level}
                 variant="urgent"
               />
@@ -104,14 +133,18 @@ export function HomePage() {
         <div className="mt-4 grid gap-3">
           {situations.map((situation) => {
             const visibleInSituation = filterPhrases(phrasesBySituation[situation.id] ?? [], level)
-            const done = visibleInSituation.filter((item) => state.progress.completedPhraseIds.includes(item.id)).length
+            const phraseIds = visibleInSituation.map((item) => item.id)
+            const known = getKnownPhraseCount(state.progress, phraseIds)
+            const studying = getStudyingPhraseCount(state.progress, phraseIds)
+            const difficult = getDifficultPhraseCount(state.progress, phraseIds)
 
             return (
               <SituationCard
                 key={situation.id}
                 situation={situation}
                 to={`/situation/${situation.slug}`}
-                progressLabel={`${done}/${visibleInSituation.length}`}
+                progressLabel={`${known}/${visibleInSituation.length}`}
+                detailLabel={`В работе: ${studying}, трудных: ${difficult}`}
                 level={level}
               />
             )
@@ -120,7 +153,9 @@ export function HomePage() {
       </section>
 
       <ProgressSummary
-        completed={completedInVisible}
+        known={knownInVisible}
+        studying={studyingInVisible}
+        difficult={difficultInVisible}
         total={visiblePhrases.length}
         quizTotal={quizTotal}
         quizAccuracy={quizAccuracy}

@@ -28,8 +28,8 @@ npm run build
 
 ### Pure logic
 
-- `src/lib/storage.test.ts`: storage fallback and persistence round-trip
-- `src/lib/learning.test.ts`: prompt/answer direction, filtering, and quiz option generation
+- `src/lib/storage.test.ts`: storage fallback, persistence round-trip, and v1-to-v2 migration
+- `src/lib/learning.test.ts`: prompt/answer direction, filtering, quiz generation, and practice-priority ordering
 
 ### Shared state
 
@@ -39,8 +39,9 @@ npm run build
 ### UI components
 
 - `src/components/Layout.test.tsx`: Russian navigation labels render in the app shell
-- `src/components/PhraseCard.test.tsx`: direction-dependent labels and answer reveal behavior
+- `src/components/PhraseCard.test.tsx`: direction-dependent labels, answer reveal behavior, and learning actions
 - `src/pages/HomePage.test.tsx`: daily CTA, urgent situations, continue card, and practical situation descriptions
+- `src/pages/PracticePage.test.tsx`: daily cycle, situation scoping, and favorites-only practice
 
 ## Coverage Shape
 
@@ -49,13 +50,11 @@ The current suite is strongest around:
 - local storage safety
 - pure learning helpers
 - state persistence
-- a few UI regressions around key shared components
+- route-level practice flow plus a few UI regressions around key shared components
 
 The current suite does not yet cover:
 
 - route-level flows
-- onboarding completion behavior
-- daily/favorites/situation practice flows end-to-end
 - audio playback and TTS fallback behavior
 - PWA registration or offline caching
 

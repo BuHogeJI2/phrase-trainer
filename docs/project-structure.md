@@ -9,7 +9,8 @@
 ├── docs/
 ├── public/
 │   ├── audio/
-│   └── vite.svg
+│   ├── favicon.svg
+│   └── og-cover.svg
 ├── src/
 │   ├── components/
 │   │   └── ui/
@@ -47,7 +48,7 @@ Route-level screens:
 
 - `HomePage.tsx`: dashboard, daily session entry, progress summary, and situation list.
 - `SituationPage.tsx`: phrase list scoped to one situation.
-- `PracticePage.tsx`: card mode and quiz mode for global, daily, favorites, or one-situation practice.
+- `PracticePage.tsx`: guided 5-phrase training cycle for global, daily, favorites, or one-situation practice.
 - `SavedPage.tsx`: favorites list and entry point into favorites-only practice.
 - `SettingsPage.tsx`: persistent learning preferences and progress reset.
 - `NotFoundPage.tsx`: fallback route target.
@@ -62,8 +63,8 @@ Small shared primitives for the current design system foundation, such as button
 
 ### `src/state`
 
-- `AppContext.tsx`: reducer-backed application state and persistence wiring.
-- `AppContext.test.tsx`: persistence behavior tests for saved phrases, completed phrases, and preferences.
+- `AppContext.tsx`: reducer-backed application state and persistence wiring for prefs plus per-phrase progress.
+- `AppContext.test.tsx`: persistence behavior tests for saved phrases, phrase-state progress, and preferences.
 
 ### `src/data`
 
@@ -77,8 +78,8 @@ Static application content:
 
 Pure helpers and browser storage logic:
 
-- `learning.ts`: filtering, quiz question generation, daily selection, badges, and prompt/answer mapping.
-- `storage.ts`: default state, storage validation, serialization, and reset helpers.
+- `learning.ts`: filtering, prompt/answer mapping, practice prioritization, matching and quiz generation, and badges.
+- `storage.ts`: default state, storage validation, v1-to-v2 migration, serialization, and reset helpers.
 - `transliterate.ts`: German-to-Cyrillic pronunciation hint generation.
 
 ### `src/test`

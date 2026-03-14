@@ -6,9 +6,10 @@ interface ContinueCardProps {
   situation: Situation | null
   lastVisitedAt: string | null
   progressLabel: string
+  detailLabel?: string
 }
 
-export function ContinueCard({ situation, lastVisitedAt, progressLabel }: ContinueCardProps) {
+export function ContinueCard({ situation, lastVisitedAt, progressLabel, detailLabel }: ContinueCardProps) {
   if (!situation) {
     return null
   }
@@ -21,8 +22,9 @@ export function ContinueCard({ situation, lastVisitedAt, progressLabel }: Contin
       </h2>
       <p className="mt-2 text-sm leading-6 text-[var(--color-text-muted)]">{situation.descriptionRu}</p>
       <p className="mt-4 text-sm text-[var(--color-text-muted)]">
-        Прогресс: <span className="font-semibold text-[var(--color-text)]">{progressLabel}</span>
+        В памяти уверенно: <span className="font-semibold text-[var(--color-text)]">{progressLabel}</span>
       </p>
+      {detailLabel ? <p className="mt-1 text-sm text-[var(--color-text-muted)]">{detailLabel}</p> : null}
       {lastVisitedAt ? (
         <p className="mt-1 text-xs text-[var(--color-text-muted)]">Последний визит: {new Date(lastVisitedAt).toLocaleString('ru-RU')}</p>
       ) : null}

@@ -2,7 +2,7 @@
 
 ## Current Implementation Scope
 
-Only Iteration 1 is in implementation scope right now.
+The app now includes Iteration 1 plus a first training-cycle slice that makes practice more active and memory-oriented.
 
 ### Iteration 1
 
@@ -11,20 +11,29 @@ Only Iteration 1 is in implementation scope right now.
 - design system foundation
 - situation card improvements
 
+### Core Training Cycle Slice
+
+- 5-phrase study blocks
+- required checkpoint after each block
+- matching plus multiple-choice recall
+- immediate mistake review and one retry pass
+- per-phrase learning states: new / studying / difficult / known
+- heuristic local repetition for daily and scoped practice
+
 ## Future Iterations
 
 These are documented for planning only and should not be implemented unless a later task explicitly asks for them.
 
 ### Iteration 2
 
-- learning modes inside a situation
-- improved phrase card
-- favorites improvements
-- continue where you left off
+- situation-level learning mode refinement
+- phrase-card polish on top of the new difficult/known actions
+- favorites improvements beyond the current scoped practice
+- continue where you left off across partial training blocks
 
 ### Iteration 3
 
-- review today / difficult phrases
+- stronger review-today system on top of the current heuristic repetition
 - filters by usefulness
 - search
 - urgent pack refinement
@@ -36,6 +45,13 @@ These are documented for planning only and should not be implemented unless a la
 - listen and repeat
 - slow audio scaffolding
 - reminder settings placeholder
+
+## Explicitly Deferred
+
+- typed recall
+- pronunciation scoring or speech recognition
+- full spaced-repetition scheduling
+- push reminders or backend-backed review queues
 
 ## Roadmap Rules
 
@@ -52,10 +68,10 @@ These are documented for planning only and should not be implemented unless a la
 
 ### Product Assets
 
-- Replace the placeholder `public/vite.svg` manifest icons with branded PWA icons sized for installable devices.
+- Replace the SVG manifest icon with branded raster install icons sized for installable devices.
 - Audit the optional `public/audio/` catalog and decide whether missing phrase recordings should remain acceptable or become a tracked completeness target.
 
 ### Testing
 
-- Add route-level/integration tests for onboarding, practice source switching, and empty-state flows.
+- Expand route-level practice coverage for long-session edge cases and progress summaries across multiple blocks.
 - Add coverage for audio playback fallback so changes to `PhraseCard` do not silently break browser TTS behavior.

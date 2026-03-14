@@ -46,8 +46,10 @@ An assertion fails during module evaluation if any situation does not contain ex
 User state is persisted in browser storage under:
 
 ```text
-ru-de-phrase-trainer-state-v1
+ru-de-phrase-trainer-state-v2
 ```
+
+The loader still reads legacy `ru-de-phrase-trainer-state-v1` data and migrates old completed phrases into non-verified `studying` progress.
 
 Persisted shape:
 
@@ -61,8 +63,21 @@ interface AppState {
     onboardingCompleted: boolean
   }
   progress: {
-    completedPhraseIds: string[]
     savedPhraseIds: string[]
+    phraseProgress: Record<
+      string,
+      {
+        status: 'new' | 'studying' | 'difficult' | 'known'
+        viewCount: number
+        lastViewedAt: string | null
+        correctCount: number
+        incorrectCount: number
+        lastResult: 'correct' | 'incorrect' | null
+        manualDifficult: boolean
+        manualKnown: boolean
+        lastPracticedAt: string | null
+      }
+    >
     quizStats: {
       totalAnswered: number
       correct: number
@@ -76,13 +91,24 @@ interface AppState {
 
 `loadStateFromStorage()` validates fields defensively and falls back to defaults when values are invalid.
 
+## Learning Semantics
+
+- Revealing a translation marks a phrase as seen, not learned.
+- Verified progress comes from active recall in checkpoint and retry steps.
+- Phrase status is derived from manual flags plus performance signals:
+  - `new`: not yet viewed or answered
+  - `studying`: seen or practiced, but not stable
+  - `difficult`: manually marked or recently answered incorrectly
+  - `known`: manually marked or repeatedly answered correctly
+
 ## Derived Data
 
 The app also relies on several derived structures:
 
 - `situationBySlug` and `situationById` maps in `src/data/situations.ts`
 - `phrasesBySituation` and `phraseById` in `src/data/phrases.ts`
-- quiz questions built from a visible phrase pool
+- prioritized practice pools for daily, situation, favorites, and general practice
+- matching rounds and quiz questions built from a visible phrase pool
 - badge status computed from progress counts and streaks
 
 ## Audio Assets

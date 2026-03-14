@@ -13,7 +13,7 @@ export function DailyPracticeCard({ newCount, reviewCount, totalCount }: DailyPr
   return (
     <section className="rounded-[32px] border border-[var(--color-border-strong)] bg-[var(--color-accent)] p-6 text-white shadow-[var(--shadow-strong)]">
       <p className="text-sm font-semibold uppercase tracking-[0.12em] text-white/75">Практика на сегодня</p>
-      <h2 className="mt-3 text-2xl font-semibold leading-tight">Короткая сессия, чтобы не терять ритм и быстрее привыкать к живым фразам.</h2>
+      <h2 className="mt-3 text-2xl font-semibold leading-tight">Небольшой блок: изучить, проверить себя и сразу закрепить сложные фразы.</h2>
 
       <div className="mt-5 grid grid-cols-3 gap-3">
         <div className="rounded-2xl bg-white/12 p-3">
@@ -30,7 +30,7 @@ export function DailyPracticeCard({ newCount, reviewCount, totalCount }: DailyPr
         </div>
       </div>
 
-      <p className="mt-4 text-sm text-white/80">Сегодня в подборке {totalCount} фраз. Сессия подстраивается под ваш текущий фильтр уровня.</p>
+      <p className="mt-4 text-sm text-white/80">Сегодня в подборке {totalCount} фраз. Сначала вы проходите блок, потом короткую проверку и быстрый разбор ошибок.</p>
 
       <Link
         to="/practice?source=daily"

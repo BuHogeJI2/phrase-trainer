@@ -3,7 +3,7 @@ import { defaultState, loadStateFromStorage, saveStateToStorage } from './storag
 
 describe('storage', () => {
   it('falls back to default state for invalid json', () => {
-    localStorage.setItem('ru-de-phrase-trainer-state-v1', 'not-json')
+    localStorage.setItem('ru-de-phrase-trainer-state-v2', 'not-json')
     const state = loadStateFromStorage(localStorage)
     expect(state).toEqual(defaultState)
   })
@@ -24,5 +24,28 @@ describe('storage', () => {
     const state = loadStateFromStorage(localStorage)
     expect(state.prefs.direction).toBe('de_to_ru')
     expect(state.prefs.onboardingCompleted).toBe(true)
+  })
+
+  it('migrates completed phrases from v1 into studying progress', () => {
+    localStorage.setItem(
+      'ru-de-phrase-trainer-state-v1',
+      JSON.stringify({
+        prefs: {
+          onboardingCompleted: true,
+        },
+        progress: {
+          completedPhraseIds: ['transport-01'],
+          savedPhraseIds: ['transport-01'],
+        },
+      }),
+    )
+
+    const state = loadStateFromStorage(localStorage)
+
+    expect(state.progress.savedPhraseIds).toEqual(['transport-01'])
+    expect(state.progress.phraseProgress['transport-01']).toMatchObject({
+      status: 'studying',
+      viewCount: 1,
+    })
   })
 })
